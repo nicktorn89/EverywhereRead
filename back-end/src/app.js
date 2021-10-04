@@ -12,7 +12,7 @@ const morgan = require('morgan');
 const http = require('http');
 const path = require('path');
 const os = require('os');
-const redisClient = require('./redisClient');
+const { redisClient } = require('./redisClient');
 const RedisStore = require('connect-redis')(session);
 
 const { routes } = require('./routes');

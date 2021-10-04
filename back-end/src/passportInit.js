@@ -1,11 +1,8 @@
-
-const { promisify } = require('util');
-
 const bcrypt = require('bcrypt');
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const redisClient = require('./redisClient');
+const { existsAsync, getAsync, hgetAsync } = require('./redisClient');
 
 passport.serializeUser(function (user, done) {
   done(null, user);
@@ -14,11 +11,6 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(function (username, done) {
   done(null, username);
 });
-
-const getAsync = promisify(redisClient.get).bind(redisClient);
-const existsAsync = promisify(redisClient.exists).bind(redisClient);
-
-const hgetAsync = promisify(redisClient.hget).bind(redisClient);
 
 passport.use(
   new LocalStrategy(
