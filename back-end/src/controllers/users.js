@@ -11,6 +11,8 @@ const users = (app) => {
     passport.authenticate('local', { successRedirect: '/reader' }),
     (req, res) => {
       console.log('req', req);
+
+      return res.status(200).send('Hi');
     },
   );
 

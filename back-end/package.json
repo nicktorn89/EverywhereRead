@@ -25,7 +25,7 @@
     "passport": "0.4.1",
     "passport-cookie": "1.0.9",
     "passport-local": "1.0.0",
-    "redis": "4.0.0-rc.1"
+    "redis": "3.1.2"
   },
   "devDependencies": {
     "concurrently": "6.2.1",
