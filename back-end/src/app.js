@@ -1,9 +1,5 @@
 const express = require('express');
 const session = require('express-session');
-const { promisify } = require('util');
-const redis = require('redis');
-
-// const redisClient = require('./redisClient');
 
 const bodyParser = require('body-parser');
 const compression = require('compression');
@@ -16,117 +12,26 @@ const morgan = require('morgan');
 const http = require('http');
 const path = require('path');
 const os = require('os');
+const redisClient = require('./redisClient');
 const RedisStore = require('connect-redis')(session);
 
 const { routes } = require('./routes');
 const { controllers } = require('./controllers');
-
-let redisClient = redis.createClient(
-  {
-    url: 'http://localhost:6379',
-    // host: 'localhost',
-    // port: 6379,
-    // db: 1,
-  },
-);
-
-redisClient.on('error', function(error) {
-  console.error('Error with redis client', error);
-});
-
-console.log('redisClient', redisClient);
-
-// redisClient.connect();
-
-// const oneDay = 1000 * 60 * 60 * 24;
+const passport = require('./passportInit');
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// let store = new RedisStore({ client: redisClient });
-
 app.use(session({
   store: new RedisStore({
-    // url: 'localhost:6379'
     client: redisClient,
   }),
   secret: 'good-password',
   resave: false,
   saveUninitialized: false
 }));
-
-// app.use(session({
-//   store,
-//   secret: 'good-password',
-//   resave: true,
-//   saveUninitialized: false,
-//   cookie: {
-//     maxAge: oneDay,
-//     httpOnly: false,
-//   },
-// }));
-
-const bcrypt = require('bcrypt');
-
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-
-passport.serializeUser(function (user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function (username, done) {
-  done(null, username);
-});
-
-const getAsync = promisify(redisClient.get).bind(redisClient);
-const existsAsync = promisify(redisClient.exists).bind(redisClient);
-
-const hgetAsync = promisify(redisClient.hget).bind(redisClient);
-
-passport.use(
-  new LocalStrategy(
-    {
-      usernameField: 'email',
-      passwordField: 'password',
-    },
-    async (email, password, done) => {
-      try {
-        const isUserExist = Boolean(await existsAsync(`emails:${email}`));
-
-        const wrongCredentialsMessage = 'Provided email or password is not found.';
-
-        if (!isUserExist) {
-          return done(null, false, { message: wrongCredentialsMessage });
-        }
-
-        const userId = await getAsync(`emails:${email}`);
-
-        const hashedUserPassword = await hgetAsync(`users:${userId}`, 'password');
-
-        console.log('hashedUserPassword', hashedUserPassword);
-
-        const isPasswordValid = await (
-          new Promise((resolve, reject) => bcrypt.compare(password, hashedUserPassword, (err, result) => {
-            if (err) reject(err);
-
-            resolve(result);
-          }))
-        );
-
-        if (isPasswordValid) {
-          return done(null, userId);
-        }
-
-        return done(null, false);
-      } catch (error) {
-        return done(error);
-      }
-    }
-  ),
-);
 
 const port = '3000';
 
@@ -173,5 +78,3 @@ app.use((_, res, next) => {
 http.createServer(app).listen(port, () => {
   console.log('App server running at http://' + os.hostname() + ':' + port);
 });
-
-module.exports = passport;

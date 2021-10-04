@@ -3,17 +3,10 @@ const passport = require('passport');
 const redisClient = require('../redisClient');
 const saltRounds = 10;
 
-console.log('passport', passport);
-
 const users = (app) => {
   app.post(
     '/rest/login',
     passport.authenticate('local', { successRedirect: '/reader' }),
-    (req, res) => {
-      console.log('req', req);
-
-      return res.status(200).send('Hi');
-    },
   );
 
   app.post('/rest/signup', async (req, res) => {
