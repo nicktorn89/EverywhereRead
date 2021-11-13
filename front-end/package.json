@@ -5,14 +5,16 @@
   "author": "Vlad Komanchy",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build && cp dist ../back-end/src/views -r",
+    "build": "vue-cli-service build && cp ./dist/. ../back-end/src/views -ra",
     "lint": "vue-cli-service lint"
   },
   "main": "index.js",
   "dependencies": {
+    "axios": "0.22.0",
     "core-js": "^3.6.5",
     "pdf2pic": "2.1.4",
     "vue": "^2.6.11",
+    "vue-js-modal": "2.0.1",
     "vue-router": "^3.2.0"
   },
   "devDependencies": {
