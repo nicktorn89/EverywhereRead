@@ -6,7 +6,10 @@ const saltRounds = 10;
 const users = (app) => {
   app.post(
     '/rest/login',
-    passport.authenticate('local', { successRedirect: '/reader' }),
+    passport.authenticate('local'),
+    (_req, res) => {
+      return res.status(200).send({ redirect: '/reader' });
+    },
   );
 
   app.post('/rest/signup', async (req, res) => {
