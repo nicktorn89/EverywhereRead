@@ -1,12 +1,12 @@
 <template>
-  <button :class='[buttonType, className]' @click='handleClick'>
+  <button :class="[buttonType, className]" @click="handleClick">
     <span class="inner-text">{{ text }}</span>
   </button>
 </template>
 
 <script>
 export default {
-  name: 'BaseButton',
+  name: "BaseButton",
   props: {
     type: String,
     text: String,
@@ -15,11 +15,11 @@ export default {
   },
   computed: {
     buttonType: function() {
-      const baseClass = 'base-button';
+      const baseClass = "base-button";
 
-      if (this.type === 'primary') return baseClass + ' primary-button';
+      if (this.type === "primary") return baseClass + " primary-button";
 
-      return baseClass + ' secondary-button';
+      return baseClass + " secondary-button";
     },
   },
   methods: {
