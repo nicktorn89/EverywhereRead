@@ -14,14 +14,6 @@
 
     <div class="sign-up-fields">
       <text-field
-        v-model="username"
-        label="Username"
-        id="login-text-field"
-        className="sign-up-login-text-field"
-        labelClassName="sign-up-label"
-      />
-
-      <text-field
         v-model="email"
         label="Email"
         id="email-text-field"
@@ -59,13 +51,24 @@ export default {
     TextField,
   },
   data: () => ({
-    username: "",
     password: "",
     email: "",
   }),
   methods: {
-    handleSignUpUser: () => {
-      console.log("sign up");
+    async handleSignUpUser() {
+      const res = await fetch("/rest/signup", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: this.email,
+          password: this.password,
+        }),
+      });
+
+      console.log('res', res);
     },
   },
 };

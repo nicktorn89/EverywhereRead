@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const passport = require('passport');
-const redisClient = require('../redisClient');
+const { existsAsync, getAsync, setAsync, hSetAsync, incrAsync } = require('../redisClient');
 const saltRounds = 10;
 
 const users = (app) => {
@@ -23,24 +23,24 @@ const users = (app) => {
       bcrypt.hash(password, saltRounds, async (error, hash) => {
         if (error) return res.status(500).send('Error while signup');
 
-        const isEmailExist = await redisClient.exists(`emails:${email}`);
+        const isEmailExist = await existsAsync(`emails:${email}`);
 
         if (isEmailExist) {
           return res.status(400).send('Email was already registered');
         }
 
-        const oldUserId = await redisClient.exists('users:');
+        const oldUserId = await existsAsync('users:');
 
         if (!oldUserId) {
-          await redisClient.set('users:', '10000');
+          await setAsync('users:', '10000');
         } else {
-          await redisClient.incr('users:');
+          await incrAsync('users:');
         }
 
-        const currentUserId = await redisClient.get('users:');
+        const currentUserId = await getAsync('users:');
 
-        await redisClient.set(`emails:${email}`, currentUserId);
-        await redisClient.hSet(`users:${currentUserId}`, { email, name: '', password: hash });
+        await setAsync(`emails:${email}`, currentUserId);
+        await hSetAsync(`users:${currentUserId}`, 'email', email, 'name', '', 'password', hash);
 
         res.send(200);
       });
