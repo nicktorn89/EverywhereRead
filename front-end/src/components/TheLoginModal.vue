@@ -1,5 +1,5 @@
 <template>
-  <modal name="login-modal" classes="login-modal">
+  <modal name="login-modal" classes="login-modal" height="435" width="427">
     <h2 class="login-modal-title">Login in your account</h2>
 
     <div class="login-modal-fields-container">
@@ -7,6 +7,7 @@
         v-model="login"
         label="Username or email"
         id="login-text-field"
+        className="login-text-field"
       />
 
       <text-field
@@ -14,6 +15,7 @@
         type="password"
         label="Password"
         id="password-text-field"
+        className="password-text-field"
       />
     </div>
 
@@ -61,10 +63,11 @@ export default {
 
   padding-left: 38px;
   box-sizing: border-box;
+  height: 240px;
 }
 
 .login-modal-title {
-  font-size: 42px;
+  font-size: 30px;
 
   font-family: Roboto;
   font-style: normal;
@@ -74,6 +77,10 @@ export default {
 }
 
 .login-modal-button {
-  align-self: center;
+  margin-left: 38px;
+}
+
+.login-text-field {
+  margin-bottom: 20px;
 }
 </style>
