@@ -1,25 +1,26 @@
 <template>
-  <button :class='[buttonType, className]' @click='handleClick'>
-    <span class="inner-text">{{ text }}</span>
+  <button :class="[buttonType, className]" @click="handleClick">
+    <span class="inner-text">
+      <slot></slot>
+    </span>
   </button>
 </template>
 
 <script>
 export default {
-  name: 'BaseButton',
+  name: "BaseButton",
   props: {
     type: String,
-    text: String,
     onClick: Function,
     className: String,
   },
   computed: {
     buttonType: function() {
-      const baseClass = 'base-button';
+      const baseClass = "base-button";
 
-      if (this.type === 'primary') return baseClass + ' primary-button';
+      if (this.type === "primary") return baseClass + " primary-button";
 
-      return baseClass + ' secondary-button';
+      return baseClass + " secondary-button";
     },
   },
   methods: {

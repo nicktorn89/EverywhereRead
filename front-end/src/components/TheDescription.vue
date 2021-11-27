@@ -13,5 +13,7 @@
     color: #FFFFFF;
 
     margin-top: 57px;
+
+    width: 60.83%;
   }
 </style>
