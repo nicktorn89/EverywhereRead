@@ -1,6 +1,6 @@
 <template>
   <div :class="['text-field-container', className]">
-    <label :for="id" class="text-field-label">{{ label }}</label>
+    <label :for="id" :class="['text-field-label', labelClassName]">{{ label }}</label>
 
     <input
       class="text-field-input"
@@ -19,6 +19,7 @@ export default {
     id: String,
     placeholder: String,
     label: String,
+    labelClassName: String,
     value: String,
     type: String,
     className: String,
@@ -45,9 +46,15 @@ export default {
   height: 40px;
   width: 260px;
 
-  background: #FFFFFF;
-  border: 1.5px solid #C4C6CB;
+  background: #ffffff;
+  border: 1.5px solid #c4c6cb;
   box-sizing: border-box;
   border-radius: 3px;
+
+  outline: none;
+}
+
+.text-field-input:focus {
+  border-color: hsl(197, calc(var(--saturation-factor, 1) * 100%), 47.8%);
 }
 </style>
