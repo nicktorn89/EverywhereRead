@@ -5,9 +5,20 @@
     <the-description />
 
     <div class="start-page-buttons-container">
-      <base-button text="Login" className="login-button" type="primary" />
-      <base-button text="Sign Up" className="sign-up-button" :onClick="redirectToSignUp" />
+      <base-button
+        text="Login"
+        className="login-button"
+        type="primary"
+        :onClick="handleOpenModal"
+      />
+      <base-button
+        text="Sign Up"
+        className="sign-up-button"
+        :onClick="redirectToSignUp"
+      />
     </div>
+
+    <the-login-modal />
   </main>
 </template>
 
@@ -15,6 +26,7 @@
 import LogoTitle from "../components/LogoTitle";
 import TheDescription from "../components/TheDescription";
 import BaseButton from "../components/BaseButton";
+import TheLoginModal from "../components/TheLoginModal";
 
 export default {
   name: "StartPage",
@@ -22,10 +34,17 @@ export default {
     LogoTitle,
     TheDescription,
     BaseButton,
+    TheLoginModal,
   },
   methods: {
-    redirectToSignUp: function() {
-      this.$router.push('signup');
+    redirectToSignUp() {
+      this.$router.push("signup");
+    },
+    handleOpenModal() {
+      this.$modal.show("login-modal");
+    },
+    handleCloseModal() {
+      this.$modal.hide("login-modal");
     },
   },
 };
