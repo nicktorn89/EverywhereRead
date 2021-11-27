@@ -5,7 +5,7 @@
     <div class="login-modal-fields-container">
       <text-field
         v-model="login"
-        label="Username or email"
+        label="Username"
         id="login-text-field"
         className="login-text-field"
       />
