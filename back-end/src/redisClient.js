@@ -7,7 +7,7 @@ let redisClient = redis.createClient(
   },
 );
 
-redisClient.on('error', function(error) {
+redisClient.on('error', function (error) {
   console.error('Error with redis client', error);
 });
 
@@ -16,10 +16,18 @@ const existsAsync = promisify(redisClient.exists).bind(redisClient);
 
 const hgetAsync = promisify(redisClient.hget).bind(redisClient);
 
-module.exports = { 
+const setAsync = promisify(redisClient.set).bind(redisClient);
+const hSetAsync = promisify(redisClient.hset).bind(redisClient);
+
+const incrAsync = promisify(redisClient.incr).bind(redisClient);
+
+module.exports = {
   redisClient,
 
   getAsync,
   existsAsync,
   hgetAsync,
+  setAsync,
+  hSetAsync,
+  incrAsync,
 };
