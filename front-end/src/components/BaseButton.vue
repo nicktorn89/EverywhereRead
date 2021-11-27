@@ -1,6 +1,8 @@
 <template>
   <button :class="[buttonType, className]" @click="handleClick">
-    <span class="inner-text">{{ text }}</span>
+    <span class="inner-text">
+      <slot></slot>
+    </span>
   </button>
 </template>
 
@@ -9,7 +11,6 @@ export default {
   name: "BaseButton",
   props: {
     type: String,
-    text: String,
     onClick: Function,
     className: String,
   },

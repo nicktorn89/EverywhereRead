@@ -6,16 +6,16 @@
 
     <div class="start-page-buttons-container">
       <base-button
-        text="Login"
         className="login-button"
         type="primary"
         :onClick="handleOpenModal"
-      />
-      <base-button
-        text="Sign Up"
-        className="sign-up-button"
-        :onClick="redirectToSignUp"
-      />
+      >
+        Login
+      </base-button>
+
+      <base-button className="sign-up-button" :onClick="redirectToSignUp">
+        Sign Up
+      </base-button>
     </div>
 
     <the-login-modal />

@@ -1,29 +1,35 @@
 <template>
-  <modal name="login-modal">
+  <modal name="login-modal" classes="login-modal">
     <h2 class="login-modal-title">Login in your account</h2>
 
-    <text-field
-      v-model="login"
-      label="Username or email"
-      id="login-text-field"
-    />
+    <div class="login-modal-fields-container">
+      <text-field
+        v-model="login"
+        label="Username or email"
+        id="login-text-field"
+      />
 
-    <text-field
-      v-model="password"
-      type="password"
-      label="Password"
-      id="password-text-field"
-    />
+      <text-field
+        v-model="password"
+        type="password"
+        label="Password"
+        id="password-text-field"
+      />
+    </div>
+
+    <base-button type="primary" className="login-modal-button" :onClick="handleLoginUser">Login</base-button>
   </modal>
 </template>
 
 <script>
 import TextField from "./TextField";
+import BaseButton from "./BaseButton";
 
 export default {
   name: "TheLoginModal",
   components: {
     TextField,
+    BaseButton,
   },
   props: {
     onOpen: Function,
@@ -32,7 +38,42 @@ export default {
     login: "",
     password: "",
   }),
+  methods: {
+    handleLoginUser() {
+      console.log('hello');
+    }
+  }
 };
 </script>
 
-<style scoped></style>
+<style>
+.login-modal {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.login-modal-fields-container {
+  display: flex;
+  flex-direction: column;
+
+  padding-left: 38px;
+  box-sizing: border-box;
+}
+
+.login-modal-title {
+  font-size: 42px;
+
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+
+  margin-left: 38px;
+}
+
+.login-modal-button {
+  align-self: center;
+}
+</style>
