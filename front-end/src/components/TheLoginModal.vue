@@ -19,13 +19,19 @@
       />
     </div>
 
-    <base-button type="primary" className="login-modal-button" :onClick="handleLoginUser">Login</base-button>
+    <base-button
+      type="primary"
+      className="login-modal-button"
+      :onClick="handleLoginUser"
+      >Login</base-button
+    >
   </modal>
 </template>
 
 <script>
 import TextField from "./TextField";
 import BaseButton from "./BaseButton";
+import axios from "axios";
 
 export default {
   name: "TheLoginModal",
@@ -41,10 +47,27 @@ export default {
     password: "",
   }),
   methods: {
-    handleLoginUser() {
-      console.log('hello');
-    }
-  }
+    async handleLoginUser() {
+      try {
+        const {
+          data: { redirect },
+        } = await axios.post(
+          "/rest/login",
+          {
+            email: this.login,
+            password: this.password,
+          },
+          {
+            withCredentials: true,
+          }
+        );
+
+        this.$router.go(redirect);
+      } catch (error) {
+        console.error("Error while trying to login", error);
+      }
+    },
+  },
 };
 </script>
 

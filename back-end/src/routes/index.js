@@ -1,10 +1,18 @@
 function routes(app) {
   app.get('/', (req, res) => {
-    res.render('index.html');
+    if (req.user) {
+      res.redirect('/reader');
+    } else {
+      res.render('index.html');
+    }
   });
 
   app.get('/reader', (req, res) => {
-    res.render('index.html');
+    if (req.user) {
+      res.render('index.html');
+    } else {
+      res.redirect('/');
+    }
   });
 
   app.get('/signup', (req, res) => {

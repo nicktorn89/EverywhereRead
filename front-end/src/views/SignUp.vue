@@ -56,7 +56,8 @@ export default {
   }),
   methods: {
     async handleSignUpUser() {
-      const res = await fetch("/rest/signup", {
+      // TODO: change for using axios
+      await fetch("/rest/signup", {
         method: "POST",
         mode: "cors",
         headers: {
@@ -67,8 +68,6 @@ export default {
           password: this.password,
         }),
       });
-
-      console.log('res', res);
     },
   },
 };

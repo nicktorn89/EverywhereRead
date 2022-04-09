@@ -12,6 +12,15 @@ const users = (app) => {
     },
   );
 
+  app.post(
+    '/rest/logout',
+    (req, res) => {
+      req.logout();
+
+      return res.status(200).send({ redirect: '/' });
+    },
+  );
+
   app.post('/rest/signup', async (req, res) => {
     const { email, password } = req.body;
 
