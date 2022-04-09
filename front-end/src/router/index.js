@@ -19,7 +19,7 @@ const routes = [
     path: '/reader',
     name: 'Reader',
 
-    component: () => import('../views/Reader.vue'),
+    component: () => import('../views/ReaderPage.vue'),
   }
 ]
 
