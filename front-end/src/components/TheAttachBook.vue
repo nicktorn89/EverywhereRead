@@ -9,6 +9,14 @@
     >
       Save book
     </base-button>
+
+    <base-button
+      className="delete-book-button"
+      type="primary"
+      :onClick="handleDeleteBook"
+    >
+      Delete book
+    </base-button>
   </div>
 </template>
 
@@ -21,6 +29,10 @@ export default {
   components: {
     BaseButton,
   },
+  props: {
+    userBookId: String,
+    onRefresh: Function,
+  },
   data() {
     return {
       file: null,
@@ -30,6 +42,17 @@ export default {
     handleChangeInputFile(e) {
       if (e.currentTarget.files && e.currentTarget.files[0]) {
         this.file = e.currentTarget.files[0];
+      }
+    },
+    async handleDeleteBook() {
+      try {
+        console.log('this.userBookId in AttachBook', this.userBookId);
+
+        await axios.delete(`/rest/books/${this.userBookId}`);
+
+        this.onRefresh();
+      } catch (error) {
+        console.error("Error while deleting book", error);
       }
     },
     async handleSaveBook() {
@@ -43,6 +66,8 @@ export default {
             "Content-Type": "multipart/form-data",
           },
         });
+
+        this.onRefresh();
       } catch (error) {
         console.error("Error while saving book", error);
       }

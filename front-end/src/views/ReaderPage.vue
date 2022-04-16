@@ -8,7 +8,11 @@
     Log out
   </base-button>
 
-  <the-attach-book :onChange="handleChangeInputFile" />
+  <the-attach-book 
+    :onChange="handleChangeInputFile" 
+    :userBookId="userBookId"
+    :onRefresh="getUserBook"
+   />
   <div/>
 </template>
 
@@ -22,7 +26,24 @@ export default {
     BaseButton,
     TheAttachBook,
   },
+  data: () => ({
+    userBookId: "",
+  }),
+  mounted() {
+    this.getUserBook();
+  },
   methods: {
+    async getUserBook() {
+      try {
+        const { data } = await axios.get("/rest/books");
+
+        console.log("data in getUserBook", data);
+
+        this.userBookId = data;
+      } catch (error) {
+        console.error("Error while getting user book");
+      }
+    },
     async handleLogOutUser() {
       try {
         const {
