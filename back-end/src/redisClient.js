@@ -23,6 +23,9 @@ const hSetAsync = promisify(redisClient.hset).bind(redisClient);
 
 const incrAsync = promisify(redisClient.incr).bind(redisClient);
 
+const rpushAsync = promisify(redisClient.RPUSH).bind(redisClient);
+const lrangeAsync = promisify(redisClient.LRANGE).bind(redisClient);
+
 module.exports = {
   redisClient,
 
@@ -33,4 +36,7 @@ module.exports = {
   setAsync,
   hSetAsync,
   incrAsync,
+
+  rpushAsync,
+  lrangeAsync
 };

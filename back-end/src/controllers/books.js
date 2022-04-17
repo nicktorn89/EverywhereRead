@@ -1,7 +1,17 @@
 const multer = require('multer');
 const fs = require('fs');
+
+const { promisify } = require('util');
+const { mkdirsSync } = require('fs-extra');
 const { unlink } = require('fs/promises');
-const { existsAsync, setAsync, incrAsync, getAsync, hSetAsync, hgetAsync, deleteAsync } = require('../redisClient');
+
+const { PDFDocument } = require('pdf-lib');
+const { fromPath } = require('pdf2pic');
+
+const readFile = promisify(fs.readFile);
+
+const { existsAsync, setAsync, incrAsync, getAsync, hSetAsync, hgetAsync, deleteAsync, rpushAsync, lrangeAsync } = require('../redisClient');
+const { promiseAllWithConcurrency } = require('../promiseAllWithConcurrency');
 
 const upload = multer({
   dest: './public/pdf',
@@ -20,10 +30,18 @@ const books = (app) => {
     if (!req.user) return res.status(401).send('Unathorized');
 
     const userBookId = await getAsync(`userBooks:${req.user}`);
+    const userImages = await lrangeAsync(`images:${userBookId}`, 0, -1);
+    const fileName = await hgetAsync(`books:${userBookId}`, 'fileName');
+    const isFormatted = await hgetAsync(`books:${userBookId}`, 'isFormatted') === 'true';
 
-    console.log('userBookId', userBookId);
+    console.log('fileName', fileName, 'isFormatted', isFormatted);
 
-    return res.status(200).send(userBookId);
+    return res.status(200).send({
+      userBookId,
+      userImages,
+      fileName,
+      isFormatted,
+    });
   });
 
   app.post(
@@ -52,7 +70,12 @@ const books = (app) => {
           await unlink(`./public/pdf/${fileName}`);
         }
 
+        if (fs.existsSync(`./public/images/${fileName}`)) {
+          fs.rmSync(`./public/images/${fileName}`, { recursive: true, force: true });
+        }
+
         await deleteAsync(`books:${currentBookId}`);
+        await deleteAsync(`images:${currentBookId}`);
       }
 
       await setAsync(`userBooks:${req.user}`, currentBookId);
@@ -62,9 +85,44 @@ const books = (app) => {
         'originalName', req.file.originalname,
         'fileName', req.file.filename,
         'creationDate', new Date().valueOf(),
+        'isFormatted', false,
       );
 
-      return res.status(200).send();
+      res.status(200).send();
+
+      const imagesOutputDir = `./public/images/${req.file.filename}`;
+      const pdfFilePath = `./public/pdf/${req.file.filename}`;
+
+      const pdfFileAsBuffer = await readFile(pdfFilePath);
+
+      const pdfDoc = await PDFDocument.load(pdfFileAsBuffer);
+      const pageCount = pdfDoc.getPageCount();
+
+      const options = {
+        density: 100,
+        saveFilename: req.file.filename,
+        savePath: imagesOutputDir,
+        format: 'webp',
+        width: 1240,
+        height: 1748,
+      };
+
+      const storeAsImage = fromPath(pdfFilePath, options);
+
+      mkdirsSync(imagesOutputDir);
+
+      const pagesArray = new Array(pageCount).fill(null).map((_, index) => index + 1);
+
+      const savePageAsImage = (pageNumber) => async () => {
+        const { path: imagePath } = await storeAsImage(pageNumber);
+
+        return imagePath;
+      };
+
+      const imagesPaths = await promiseAllWithConcurrency(pagesArray.map((pageNumber) => savePageAsImage(pageNumber)), 5);
+
+      await rpushAsync(`images:${currentBookId}`, ...imagesPaths);
+      await hSetAsync(`books:${currentBookId}`, 'isFormatted', true);
     },
   );
 
