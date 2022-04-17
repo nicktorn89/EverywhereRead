@@ -60,6 +60,8 @@ app.use('/js', express.static(__dirname + '/views/js', { maxAge: ONE_DAY }));
 app.use('/css', express.static(__dirname + '/views/css', { maxAge: ONE_DAY }));
 app.use('/img', express.static(__dirname + '/views/img', { maxAge: ONE_DAY }));
 
+app.use('/public', express.static(path.join(__dirname + '/../public/'), { maxAge: ONE_DAY }));
+
 const staticDir = path.join(__dirname, 'public');
 app.use(express.static(staticDir, { maxAge: ONE_DAY }));
 

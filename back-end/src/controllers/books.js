@@ -34,8 +34,6 @@ const books = (app) => {
     const fileName = await hgetAsync(`books:${userBookId}`, 'fileName');
     const isFormatted = await hgetAsync(`books:${userBookId}`, 'isFormatted') === 'true';
 
-    console.log('fileName', fileName, 'isFormatted', isFormatted);
-
     return res.status(200).send({
       userBookId,
       userImages,
@@ -129,30 +127,43 @@ const books = (app) => {
   app.delete(
     '/rest/books/:bookId',
     async (req, res) => {
-      const { bookId } = req.params;
+      try {
+        const { bookId } = req.params;
 
-      if (!req.user) return res.status(401).send('Unathorized');
-      if (!bookId) return res.status(400).send('Book id is empty');
+        if (!req.user) return res.status(401).send('Unathorized');
+        if (!bookId) return res.status(400).send('Book id is empty');
 
-      const currentUserBookId = await getAsync(`userBooks:${req.user}`);
+        const currentUserBookId = await getAsync(`userBooks:${req.user}`);
 
-      if (currentUserBookId !== bookId) {
-        return res.status(400).send('Book id is not belongs to user');
-      }
-
-      if (currentUserBookId) {
-        const fileName = await hgetAsync(`books:${currentUserBookId}`, 'fileName');
-
-        if (fs.existsSync(`./public/pdf/${fileName}`)) {
-          await unlink(`./public/pdf/${fileName}`);
+        if (currentUserBookId !== bookId) {
+          return res.status(400).send('Book id is not belongs to user');
         }
 
-        await deleteAsync(`books:${currentUserBookId}`);
+        if (currentUserBookId) {
+          const fileName = await hgetAsync(`books:${currentUserBookId}`, 'fileName');
+
+          if (fs.existsSync(`./public/pdf/${fileName}`)) {
+            await unlink(`./public/pdf/${fileName}`);
+          }
+
+          if (fs.existsSync(`./public/images/${fileName}`)) {
+            fs.rmSync(`./public/images/${fileName}`, { recursive: true, force: true });
+          }
+
+          await deleteAsync(`books:${currentUserBookId}`);
+          console.log('delete async books');
+          await deleteAsync(`images:${currentUserBookId}`);
+          console.log('delete async images');
+        }
+
+        await deleteAsync(`userBooks:${req.user}`);
+
+        return res.status(200).send();
+      } catch (error) {
+        console.error('Error while deleting book');
+
+        return res.status(500).send(error);
       }
-
-      await setAsync(`userBooks:${req.user}`, '');
-
-      return res.status(200).send();
     },
   );
 };

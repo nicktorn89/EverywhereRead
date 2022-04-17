@@ -46,8 +46,6 @@ export default {
     },
     async handleDeleteBook() {
       try {
-        console.log('this.userBookId in AttachBook', this.userBookId);
-
         await axios.delete(`/rest/books/${this.userBookId}`);
 
         this.onRefresh();

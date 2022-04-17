@@ -13,6 +13,8 @@
     :userBookId="userBookId"
     :onRefresh="getUserBook"
    />
+
+  <the-reader :userBookId="userBookId" :userImages="userImages" />
   <div/>
 </template>
 
@@ -20,14 +22,18 @@
 import BaseButton from "../components/BaseButton";
 import axios from "axios";
 import TheAttachBook from "../components/TheAttachBook.vue";
+import TheReader from "../components/TheReader.vue";
 
 export default {
   components: {
     BaseButton,
     TheAttachBook,
+    TheReader,
   },
   data: () => ({
     userBookId: "",
+    isFormatted: false,
+    userImages: [],
   }),
   mounted() {
     this.getUserBook();
@@ -37,9 +43,10 @@ export default {
       try {
         const { data } = await axios.get("/rest/books");
 
-        console.log("data in getUserBook", data);
+        this.userBookId = data.userBookId;
 
-        this.userBookId = data;
+        this.isFormatted = data.isFormatted;
+        this.userImages = data.isFormatted ? data.userImages : [];
       } catch (error) {
         console.error("Error while getting user book");
       }
